@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,8 +12,6 @@ warnings.filterwarnings("ignore")
 
 # EXPORT
 
-# In[2]:
-
 
 import os
 
@@ -24,18 +19,10 @@ os.chdir('..')
 #C:\Users\Khadijah Jasni\Desktop\SITC_EXPORT
 
 exp= pd.read_csv('C:/Users/Khadijah Jasni/Desktop/export_clean.csv', encoding='latin-1')
-
-
-# In[3]:
-
-
 exp.head()
 
 
 # VISUALIZATION ON EXPORT
-
-# In[4]:
-
 
 ### In Which year Malaysia exported highest in value
 plt.figure(figsize=[11,7])
@@ -48,12 +35,7 @@ plt.yticks(ticks)
 plt.title('Exports by year',fontdict={'fontsize': 20,'color':'Red'})
 plt.show()
 
-
-# In[5]:
-
-
 ### Exports trend during 2010-2018 using line plot
-
 plt.figure(figsize=[11,7])
 exp.groupby(by='YEAR')['VALUE'].sum().plot.line(color='red',marker='s',linestyle='--')
 ticks = np.arange(2000, 4500, 5000)
@@ -64,12 +46,7 @@ plt.ylabel('Exports in RM Million',fontdict={'fontsize': 12,'color':'green'})
 plt.title('Exports in RM Million',fontdict={'fontsize': 20,'color':'Blue'})
 plt.show()
 
-
-# In[7]:
-
-
 ### To which country Malaysia exported highest?
-
 plt.figure(figsize=[15,9])
 a=exp.groupby(by=['COUNTRY'])['VALUE'].sum().sort_values(ascending=False).head(10)
 a.plot(kind='bar',color='red',edgecolor='black')
@@ -80,10 +57,6 @@ ticks = np.arange(0, 450000, 50000)
 labels = ["{}B USD".format(i//1000) for i in ticks]
 plt.yticks(ticks, labels)
 plt.show()
-
-
-# In[8]:
-
 
 ### which Malaysia commodity was exported(highest in value)
 plt.figure(figsize=[15,9])
@@ -99,18 +72,11 @@ plt.show()
 
 
 # IMPORT DATA
-
-# In[9]:
-
-
 imp= pd.read_csv('C:/Users/Khadijah Jasni/Desktop/import_clean.csv', encoding='latin-1')
 imp.head()
 
 
 # VISUALIZATION IMPORT
-
-# In[10]:
-
 
 ### In Which year Malaysia imported highest in value
 plt.figure(figsize=[11,7])
@@ -123,10 +89,6 @@ plt.yticks(ticks, labels)
 plt.title('Imports by year',fontdict={'fontsize': 20,'color':'Red'})
 plt.show()
 
-
-# In[12]:
-
-
 ### Which commmodity has been imported highest by value?
 plt.figure(figsize=[11,7])
 imp_by_com=imp.groupby(by=['PRODUCT DESCRIPTION'])['VALUE'].sum().sort_values(ascending=False).head(10)
@@ -138,10 +100,6 @@ labels = ["{}B$".format(i//100) for i in ticks]
 plt.yticks(ticks, labels)
 plt.title('Total Imports by commodity(2010-2020)',fontdict={'fontsize': 20,'color':'Red'})
 plt.show()
-
-
-# In[13]:
-
 
 ### Imports trend during 2010-2021 using line plot
 plt.figure(figsize=[11,7])
@@ -157,11 +115,7 @@ plt.show()
 
 # EXPORT-IMPORT
 
-# In[15]:
-
-
-### We can compare Import Vs. Export during 2010-2021
-
+### Compare Import Vs. Export during 2010-2021
 plt.figure(figsize=[11,7])
 imp.groupby(by='YEAR')['VALUE'].sum().plot.line(color='red',marker='s',linestyle='--',label='import')
 exp.groupby(by='YEAR')['VALUE'].sum().plot.line(color='blue',marker='o',linestyle='-.',label='export')
@@ -174,69 +128,35 @@ plt.title('Imports Vs Export in RM Million(2010-2020)',fontdict={'fontsize': 20,
 plt.legend()
 plt.show()
 
-
-# In[16]:
-
-
 #trade gap
-
 x=imp.groupby(by='YEAR')['VALUE'].sum()
 y=exp.groupby(by='YEAR')['VALUE'].sum()
 print(min(x-y))
 print(max(x-y))
 print(x-y)
 
-
-# In[17]:
-
-
 ### Grouping countries for export data
 df1=exp.groupby(by='COUNTRY')['VALUE'].sum()
 df1.head()
-
-
-# In[18]:
-
 
 ### Grouping countries for import data
 df2=imp.groupby(by='COUNTRY')['VALUE'].sum()
 df2.head()
 
-
-# In[19]:
-
-
 ### Merging data frame on country
-
 df3=pd.merge(df1,df2,on='COUNTRY')
 df3.head()
 
-
-# In[20]:
-
-
 df3.rename(columns={'VALUE_x':'export_val','VALUE_y':'import_val'},inplace=True)
-
-
-# In[21]:
-
-
 df3.head()
 
-
-# In[22]:
-
-
-### Finding correlation b/w exoprt and import value
 ### Finding correlation b/w exoprt and import value
 value_corr=df3.corr()
 sns.heatmap(value_corr,annot=True)
 plt.show()
 
 
-# In[24]:
-
-
+# Export-Import of Malaysia with another countries(2010-2020):
 plt.figure(figsize=[15,7])
 plt.scatter(df3.export_val,df3.import_val,marker='o',edgecolor='black',color='red')
 plt.ylabel('Import value',fontdict={'fontsize':15,'color':'blue'})
@@ -250,18 +170,10 @@ plt.xticks(ticks_x, labels_x)
 plt.title('Export-Import of Malaysia with another countries(2010-2020) in RM Million',fontdict={'fontsize':20,'color':'green'})
 plt.show()
 
-
-# In[25]:
-
-
-### Making a column for trade difference to find out with which country Malaysia a been net exoprter and with a net importer?
+## Making a column for trade difference to find out with which country Malaysia a been net exoprter and with a net importer?
 
 df3['trade_diff']=df3['export_val']-df3['import_val']
 df3.head()
-
-
-# In[26]:
-
 
 df3['NE/NI']=df3['trade_diff'].apply(lambda x: 'NE' if x>0 else 'NI')
 
@@ -269,22 +181,11 @@ df3['NE/NI']=df3['trade_diff'].apply(lambda x: 'NE' if x>0 else 'NI')
 ### NI means Net Importer
 df3.head()
 
-
-# In[27]:
-
-
 ### With How many country Malaysia have been Net Exporter and Net Importer.
-
-
 #plt.figure(figsize=[10,5])
 df3['NE/NI'].value_counts(normalize=True)
 
-
-# In[31]:
-
-
-### lets understand With bar graph
-
+### Understand With bar graph
 plt.figure(figsize=[10,7])
 df3['NE/NI'].value_counts().plot.bar(color='green',edgecolor='black')
 plt.title('Net Exports and Net Imports',fontdict={'fontsize':20,'color':'green'})
@@ -292,12 +193,7 @@ plt.ylabel('Number of countries',fontdict={'fontsize':15,'color':'blue'})
 plt.xlabel('Net Export Vs Net Import',fontdict={'fontsize':15,'color':'blue'})
 plt.show()
 
-
-# In[32]:
-
-
 ### Which are top 5 countries to which Malaysia exports more and imoprt less?
-
 plt.figure(figsize=[11,7])
 top5=df3.sort_values(by='trade_diff',ascending=False).head(5)
 top5.plot(kind='bar')
@@ -308,10 +204,6 @@ plt.title('top trade surplus country(by value)',fontdict={'fontsize':20,'color':
 plt.ylabel('Values in RM Million',fontdict={'fontsize':15,'color':'blue'})
 plt.xlabel('Country',fontdict={'fontsize':15,'color':'blue'})
 plt.show()
-
-
-# In[33]:
-
 
 ### Which are top 5 countries to which Malaysia imports more and export less?
 
@@ -326,19 +218,11 @@ plt.ylabel('Values in RM Million',fontdict={'fontsize':15,'color':'blue'})
 plt.xlabel('Country',fontdict={'fontsize':15,'color':'blue'})
 plt.show()
 
-
-# In[34]:
-
-
 ### Which countries are  Malaysia's top 5 trade partner?
-
 df3['total trade']=df3['export_val']+df3['import_val']
 df3.head()
 
-
-# In[35]:
-
-
+# Malaysia top 5 trade partner(by value)
 plt.figure(figsize=[11,7])
 df3.sort_values(by='total trade',ascending=False).head(5).plot.bar()
 ticks = np.arange(-40000, 7000, 1000)
@@ -349,16 +233,9 @@ plt.ylabel('Values in RM Million',fontdict={'fontsize':15,'color':'blue'})
 plt.xlabel('Country',fontdict={'fontsize':15,'color':'blue'})
 plt.show()
 
-
-# In[36]:
-
-
+#Correlations
 c=df3.corr()
 c
-
-
-# In[37]:
-
 
 plt.figure(figsize=[11,7])
 c=df3.corr()
@@ -366,9 +243,7 @@ sns.heatmap(c,annot=True)
 plt.show()
 
 
-# In[38]:
-
-
+# Import values
 plt.figure(figsize=[11,7])
 plt.scatter(data=df3,x='total trade',y='import_val',marker='s',color='cyan',edgecolor='black')
 plt.title('total trade vs import_val',fontdict={'fontsize':20,'color':'green'})
@@ -376,10 +251,7 @@ plt.ylabel('Import Values ',fontdict={'fontsize':15,'color':'blue'})
 plt.xlabel('total trade',fontdict={'fontsize':15,'color':'blue'})
 plt.show()
 
-
-# In[39]:
-
-
+# Export values
 plt.figure(figsize=[11,7])
 plt.scatter(data=df3,x='total trade',y='export_val',marker='s',color='yellow',edgecolor='black')
 plt.title('total trade vs export_val',fontdict={'fontsize':20,'color':'green'})
@@ -387,73 +259,34 @@ plt.ylabel('Export Values ',fontdict={'fontsize':15,'color':'blue'})
 plt.xlabel('total trade',fontdict={'fontsize':15,'color':'blue'})
 plt.show()
 
-
-# In[40]:
-
-
-### Export dataset grouped by country and year
-
+## Export dataset grouped by country and year
 exp_grpby_yr=exp.groupby(by=['COUNTRY','YEAR'])['VALUE'].sum()
 exp_grpby_yr.head()
 
-
-# In[41]:
-
-
 ### Import dataset grouped by country and year
-
 imp_grpby_yr=imp.groupby(by=['COUNTRY','YEAR'])['VALUE'].sum()
 imp_grpby_yr.head()
 
-
-# In[42]:
-
-
-### Merge both dataset which grouped by country and year both
-
+# Merge both dataset which grouped by country and year both
 merged_grp=pd.merge(exp_grpby_yr,imp_grpby_yr,on=['COUNTRY','YEAR'])
 merged_grp.head()
 
-
-# In[43]:
-
-
-###Reseting index
+#Reseting index
 merged_grp.reset_index(inplace=True)
 
-
-# In[44]:
-
-
-### rename column names
-
+# rename column names
 merged_grp.rename(columns={'VALUE_x':'val_exp','VALUE_y':'val_imp'},inplace=True)
 merged_grp.head()
 
-
-# In[45]:
-
-
-### Adding columnn net_val
+# Adding columnn net_val
 merged_grp['net_trade']=merged_grp['val_exp']-merged_grp['val_imp']
 merged_grp.head()
 
-
-# In[46]:
-
-
-###For CHINA
-
+#For CHINA
 CHINA=merged_grp[merged_grp['COUNTRY']=='CHINA']
 CHINA
 
-
-# In[47]:
-
-
-### lINEPLOT FOR MALAYSIA'S TRADE WITH CHINA BETWEEN 2010-2021
-
-
+#LINEPLOT FOR MALAYSIA'S TRADE WITH CHINA BETWEEN 2010-2021
 plt.figure(figsize=[11,7])
 # CHINA = merged_grp.query("COUNTRY == 'CHINA P RP'")
 sns.lineplot(data=CHINA, x="YEAR", y="val_exp",label='exp',marker='o',color='red',linestyle='-.')
@@ -464,31 +297,18 @@ plt.ylabel('Value in million RM')
 plt.legend()
 plt.show()
 
-
-# In[48]:
-
-
-### Heatmap for Malaysia trade with CHINA 
+# Heatmap for Malaysia trade with CHINA 
 plt.figure(figsize=[11,7])
 CHINA_corr=CHINA.corr()
 sns.heatmap(CHINA_corr,annot=True)
 plt.title('MALAYSIA with CHINA',color='Blue')
 plt.show()
 
-
-# In[49]:
-
-
-### For USA
+# For USA
 USA=merged_grp[merged_grp['COUNTRY']=='UNITED STATES']
 USA
 
-
-# In[50]:
-
-
-### lINEPLOT FOR MALAYSIA'S TRADE WITH USA BETWEEN 2010-2021
-
+#LINEPLOT FOR MALAYSIA'S TRADE WITH USA BETWEEN 2010-2021
 plt.figure(figsize=[11,7])
 sns.lineplot(data=USA, x="YEAR", y="val_exp",label='exp',marker='o',color='red',linestyle='-.')
 sns.lineplot(data=USA, x="YEAR", y="val_imp",label='imp',marker='s',color='blue',linestyle=':')
@@ -498,32 +318,18 @@ plt.ylabel('Value in million RM')
 plt.legend()
 plt.show()
 
-
-# In[51]:
-
-
-### Heatmap for Malaysia trade with USA
-
-
+# Heatmap for Malaysia trade with USA
 plt.figure(figsize=[11,7])
 USA_corr=USA.corr()
 sns.heatmap(USA_corr,annot=True)
 plt.title('MALAYSIA with USA',color='Blue')
 plt.show()
 
-
-# In[52]:
-
-
-### For SINGAPORE
+# For SINGAPORE
 SINGAPORE=merged_grp[merged_grp['COUNTRY']=='SINGAPORE']
 SINGAPORE
 
-
-# In[53]:
-
-
-### lINEPLOT FOR MALAYSIA'S TRADE WITH SINGAPORE BETWEEN 2010-2021
+#LINEPLOT FOR MALAYSIA'S TRADE WITH SINGAPORE BETWEEN 2010-2021
 
 plt.figure(figsize=[11,7])
 sns.lineplot(data=USA, x="YEAR", y="val_exp",label='exp',marker='o',color='red',linestyle='-.')
@@ -534,19 +340,11 @@ plt.ylabel('Value in million RM')
 plt.legend()
 plt.show()
 
-
-# In[54]:
-
-
-### For JAPAN
+#For JAPAN
 JAPAN=merged_grp[merged_grp['COUNTRY']=='JAPAN']
 JAPAN
 
-
-# In[55]:
-
-
-### lINEPLOT FOR MALAYSIA'S TRADE WITH JAPAN BETWEEN 2010-2021
+#LINEPLOT FOR MALAYSIA'S TRADE WITH JAPAN BETWEEN 2010-2021
 
 plt.figure(figsize=[11,7])
 sns.lineplot(data=USA, x="YEAR", y="val_exp",label='exp',marker='o',color='red',linestyle='-.')
@@ -557,19 +355,11 @@ plt.ylabel('Value in million RM')
 plt.legend()
 plt.show()
 
-
-# In[56]:
-
-
-### For THAILAND
+# For THAILAND
 THAILAND=merged_grp[merged_grp['COUNTRY']=='THAILAND']
 THAILAND
 
-
-# In[57]:
-
-
-### lINEPLOT FOR MALAYSIA'S TRADE WITH THAILAND BETWEEN 2010-2021
+# LINEPLOT FOR MALAYSIA'S TRADE WITH THAILAND BETWEEN 2010-2021
 
 plt.figure(figsize=[11,7])
 sns.lineplot(data=USA, x="YEAR", y="val_exp",label='exp',marker='o',color='red',linestyle='-.')
@@ -580,18 +370,11 @@ plt.ylabel('Value in million RM')
 plt.legend()
 plt.show()
 
-
-# In[58]:
-
-
 d=merged_grp.groupby(by=['YEAR','COUNTRY'])['net_trade'].sum().sort_values(ascending=False)
 d.reset_index()
 d
 
-
-# In[59]:
-
-
+# TOP 5 country with highest surplus trade
 plt.figure(figsize=[11,7])
 d=merged_grp.groupby(by=['YEAR','COUNTRY'])['net_trade'].sum().sort_values(ascending=False).head(5)
 d.plot(kind='bar')
@@ -601,9 +384,7 @@ plt.xlabel('country and year')
 plt.show()
 
 
-# In[60]:
-
-
+#TOP 5 country with highest trade deficit
 plt.figure(figsize=[11,7])
 d=merged_grp.groupby(by=['YEAR','COUNTRY'])['net_trade'].sum().sort_values(ascending=False).tail(5)
 d.plot(kind='bar')
@@ -613,22 +394,13 @@ plt.xlabel('country and year')
 plt.show()
 
 
-# In[61]:
-
-
+# Val_export
 merged_grp['total trade']=merged_grp['val_imp']+merged_grp['val_exp']
 merged_grp
 
 
-# In[62]:
-
-
+# Total trade - year, country
 d=merged_grp.groupby(by=['YEAR','COUNTRY'])['total trade'].sum()
-d
-
-
-# In[63]:
-
 
 plt.figure(figsize=[11,7])
 d=merged_grp.groupby(by=['YEAR','COUNTRY'])['total trade'].sum().sort_values(ascending=False).head(5)
@@ -638,12 +410,7 @@ plt.ylabel('Value in million RM')
 plt.xlabel('country and year')
 plt.show()
 
-
-# # SECOND ANALYSIS
-
-# In[7]:
-
-
+# SECOND ANALYSIS
 '''Ignore deprecation and future, and user warnings.'''
 import warnings as wrn
 wrn.filterwarnings('ignore', category = DeprecationWarning) 
@@ -672,29 +439,17 @@ from IPython.display import Markdown
 def bold(string):
     display(Markdown(string))
 
-
-# In[8]:
-
-
-import numpy as np # linear algebra
+    import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import seaborn as sns #statistical data visualization
 import matplotlib.pyplot as plt #visualization library
 from statsmodels.graphics.tsaplots import plot_acf #Auto-Correlation Plots
 from statsmodels.graphics.tsaplots import plot_pacf #Partial-Auto Correlation Plots
 
-
-# In[9]:
-
-
 #exp= pd.read_csv('C:/Users/Khadijah Jasni/Desktop/full_export.csv', encoding='latin-1')
 
 df_export = pd.read_csv('C:/Users/Khadijah Jasni/Desktop/export_clean/export_clean.csv', encoding='latin-1')
 df_import = pd.read_csv('C:/Users/Khadijah Jasni/Desktop/import_clean/import_clean.csv', encoding='latin-1')
-
-
-# In[10]:
-
 
 exporting_countries=df_export[['COUNTRY']].nunique()
 importing_countries=df_import[['COUNTRY']].nunique()
@@ -703,10 +458,6 @@ print("Malaysia exports to:",exporting_countries,"countries")
 
 
 # YEAR WISE ANALYSIS
-
-# In[21]:
-
-
 #convert data into year wise
 exp_year = df_export.groupby('YEAR').agg({'VALUE': 'sum'})
 exp_year = exp_year.rename(columns={'VALUE': 'Export'})
@@ -725,16 +476,7 @@ total_year['Trade Surplus'] = imp_year.Import-exp_year.Export
 
 display(total_year)
 display(total_year.describe())
-
-
-# In[22]:
-
-
 total_year.to_csv(r'C:\Users\Khadijah Jasni\Desktop\try.csv')
-
-
-# In[23]:
-
 
 #convert data into year wise
 exp_month = df_export.groupby('MONTH').agg({'VALUE': 'sum'})
@@ -758,18 +500,7 @@ display(total_month.describe())
 display(total_month2)
 display(total_month2.describe())
 
-
-# In[ ]:
-
-
-
-
-
 # VISUALIZATION EXPORT AND IMPORT
-
-# In[24]:
-
-
 '''Visualization of Export and Import'''
 # create trace1
 trace1 = go.Bar(
@@ -792,10 +523,6 @@ trace2 = go.Bar(
 layout = go.Layout(hovermode= 'closest', title = 'Export and Import of Malaysia Trade from 2010 to 2020' , xaxis = dict(title = 'Year'), yaxis = dict(title = 'RM (millions)'))
 fig = go.Figure(data = [trace1, trace2], layout = layout)
 fig.show()
-
-
-# In[25]:
-
 
 '''Visualization of Export/Import Growth Rate'''
 # create trace1
@@ -888,26 +615,15 @@ fig.show()
 
 # COMMODITY-WISE ANALYSIS
 
-# In[90]:
-
-
 #Commodity export/Import count
 print('Total number of Export commodity:', df_export['COMMODITY'].nunique())
 print('Total number of Import commodity:', df_import['COMMODITY'].nunique())
-
-
-# In[92]:
-
 
 #The most importing and exporting commodities
 bold('**Most Exporting Commodities(In Numbers) from 2010 to 2020**')
 display(pd.DataFrame(df_export['COMMODITY'].value_counts().head(20)))
 bold('**Most Importing Commodities(In Numbers) from 2010 to 2020**')
 display(pd.DataFrame(df_import['COMMODITY'].value_counts().head(20)))
-
-
-# In[93]:
-
 
 #Coverting dataset in commodity wise'''
 exp_comm = df_export.groupby('COMMODITY').agg({'VALUE':'sum'})
@@ -917,10 +633,6 @@ exp_comm = exp_comm[:20]
 imp_comm = df_import.groupby('COMMODITY').agg({'VALUE':'sum'})
 imp_comm = imp_comm.sort_values(by = 'VALUE', ascending = False)
 imp_comm = imp_comm[:20]
-
-
-# In[95]:
-
 
 #Visualization of Export/Import Commodity wise'''
 def bar_plot(x,y, xlabel, ylabel, label, color):
@@ -939,10 +651,6 @@ def bar_plot(x,y, xlabel, ylabel, label, color):
 bar_plot(exp_comm.VALUE, exp_comm.index, 'RM (millions)', 'Commodities', 'Export of Malaysia (Commodity wise from 2010 to 2020)', 'gist_rainbow')
 bar_plot(imp_comm.VALUE, exp_comm.index, 'RM (millions)', 'Commodities', 'Import of Malaysia (Commodity wise from 2010 to 2020)', 'rainbow')
 
-
-# In[97]:
-
-
 #Create pivot table of export/import (commodity wise)
 exp_comm_table = pd.pivot_table(df_export, values = 'VALUE', index = 'COMMODITY', columns = 'YEAR')
 imp_comm_table = pd.pivot_table(df_import, values = 'VALUE', index = 'COMMODITY', columns = 'YEAR')
@@ -950,10 +658,6 @@ bold('**Commodity Composition of Exports**')
 display(exp_comm_table.sample(n=5))
 bold('**Commodity Composition of Imports**')
 display(imp_comm_table.sample(n=5))
-
-
-# In[106]:
-
 
 bold('**Trend of the Most Exporting Goods(In Values) From 2010 to 2021**')
 plt.figure(figsize=(15,19))
@@ -985,10 +689,6 @@ g3.set_title('Trend of Manufactured Goods', size = 20)
 
 plt.subplots_adjust(hspace = 0.5)
 plt.show()
-
-
-# In[107]:
-
 
 bold('**Trend of the Most Importing Goods(In Values) From 2010 to 2021**')
 plt.figure(figsize=(15,19))
@@ -1024,16 +724,9 @@ plt.show()
 
 # COUNTRY-WISE ANALYSIS
 
-# In[108]:
-
-
 #Country export/Import count
 print('Total number of country Export to:', df_export['COUNTRY'].nunique())
 print('Total number of country Import from:', df_import['COUNTRY'].nunique())
-
-
-# In[109]:
-
 
 #Coverting dataset in Country wise
 exp_country = df_export.groupby('COUNTRY').agg({'VALUE':'sum'})
@@ -1046,17 +739,9 @@ imp_country = imp_country.rename(columns={'VALUE': 'Import'})
 imp_country = imp_country.sort_values(by = 'Import', ascending = False)
 imp_country = imp_country[:20]
 
-
-# In[111]:
-
-
 #Visualization of Export/Import Country wise'''
 bar_plot(exp_country.Export, exp_country.index, 'RM (millions)', 'Countries', 'Export of Malaysia (Country wise from 2010 to 2020)', 'plasma')
 bar_plot(imp_country.Import, imp_country.index, 'RM (millions)', 'Countries', 'Import of Malaysia (Country wise from 2010 to 2020)', 'viridis')
-
-
-# In[114]:
-
 
 #Calculating trade deficit
 total_country = pd.concat([exp_country, imp_country], axis = 1)
@@ -1068,10 +753,6 @@ bold('**Direction of Foreign Trade Export and Import and Trade Balance of Malays
 display(total_country)
 bold('**Descriptive statistics**')
 display(total_country.describe())
-
-
-# In[115]:
-
 
 #Visualization of Export/Import and Trade Deficit
 trace1 = go.Bar(
@@ -1102,10 +783,6 @@ layout = go.Layout(hovermode= 'closest', title = 'Export and Import and Trade De
 fig = go.Figure(data = [trace1, trace2, trace3], layout = layout)
 fig.show()
 
-
-# In[118]:
-
-
 #Calculating trade surplus
 total_country = pd.concat([exp_country, imp_country], axis = 1)
 total_country['Trade Surplus'] = exp_country.Export - imp_country.Import
@@ -1116,10 +793,6 @@ bold('**Direction of Foreign Trade Export and Import and Trade Balance of Malays
 display(total_country)
 bold('**Descriptive statistics**')
 display(total_country.describe())
-
-
-# In[122]:
-
 
 #Visualization of Export/Import and Trade Surplus
 trace1 = go.Bar(
@@ -1150,10 +823,6 @@ layout = go.Layout(hovermode= 'closest', title = 'Export and Import and Trade Su
 fig = go.Figure(data = [trace1, trace2, trace3], layout = layout)
 fig.show()
 
-
-# In[124]:
-
-
 #Create pivot table of export/import (country wise)
 exp_country_table = pd.pivot_table(df_export, values = 'VALUE', index = 'COUNTRY', columns = 'YEAR')
 imp_country_table = pd.pivot_table(df_import, values = 'VALUE', index = 'COUNTRY', columns = 'YEAR')
@@ -1161,10 +830,6 @@ bold('**Direction of Foreign Trade Export in Malaysia**')
 display(exp_country_table.sample(n=5))
 bold('**Direction of Foreign Trade Import in Malaysia**')
 display(imp_country_table.sample(n=5))
-
-
-# In[125]:
-
 
 bold('**Trend of the Direction of Foreign Trade Export in Malaysia From 2010 to 2021**')
 plt.figure(figsize=(15,19))
@@ -1197,10 +862,6 @@ g3.set_title('Trend of Export to the Japan', size = 20)
 plt.subplots_adjust(hspace = 0.4)
 plt.show()
 
-
-# In[126]:
-
-
 bold('**Trend of the Direction of Foreign Trade Import in Malaysia From 2010 to 2021**')
 plt.figure(figsize=(15,19))
  
@@ -1232,20 +893,12 @@ g3.set_title('Trend of Import From the Japan', size = 20)
 plt.subplots_adjust(hspace = 0.4)
 plt.show()
 
-
-# In[127]:
-
-
 plt.rcParams['figure.figsize'] = (20, 7)
 plt.style.use('seaborn-dark-palette')
 
 sns.boxenplot(df_export['SITC'], df_export['VALUE'], palette = 'coolwarm')
 plt.title('Comparison of Exports and SITC Code/Commodity', fontsize = 20)
 plt.show()
-
-
-# In[128]:
-
 
 plt.rcParams['figure.figsize'] = (20, 7)
 plt.style.use('seaborn-dark-palette')
@@ -1254,11 +907,7 @@ sns.boxenplot(df_import['SITC'], df_export['VALUE'], palette = 'gist_heat_r')
 plt.title('Comparison of Imports and SITC Code/Commodity', fontsize = 20)
 plt.show()
 
-
-# In[132]:
-
-
-'Top expensive import and export '
+#'Top expensive import and export '
 expensive_import = df_import.sort_values(by='VALUE',  ascending=False).head(500)
 
 import squarify
@@ -1279,10 +928,6 @@ plt.title("Expensive Imports Countrywise Share", fontweight="bold")
 plt.axis('off')
 plt.show()
 
-
-# In[ ]:
-
-
 expensive_import = df_import.sort_values(by='value',  ascending=False).head(1000)
 temp2 = expensive_import.groupby(['sitc']).agg({'value': 'sum'})
 temp2 = temp2.sort_values(by='value')
@@ -1299,10 +944,6 @@ squarify.plot(sizes=value, label=country, color = colors, alpha=.6)
 plt.title("Expensive Imports Commodity (SITCCode)", fontweight="bold")
 plt.axis('off')
 plt.show()
-
-
-# In[134]:
-
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -1323,10 +964,6 @@ layout = go.Layout(title = 'Malaysia Export to Other Country')
 fig = go.Figure(data = trace, layout = layout)
 py.iplot(fig)
 
-
-# In[135]:
-
-
 import_map = pd.DataFrame(df_import.groupby(['COUNTRY'])['VALUE'].sum().reset_index())
 count = pd.DataFrame(import_map.groupby('COUNTRY')['VALUE'].sum().reset_index())
 
@@ -1344,9 +981,7 @@ fig = go.Figure(data = trace, layout = layout)
 py.iplot(fig)
 
 
-# In[138]:
-
-
+# Wordcloud
 df_final_trade = pd.concat([df_export, df_import])
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 plt.rcParams['figure.figsize'] = (12, 12)
